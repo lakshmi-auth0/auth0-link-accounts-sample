@@ -1,6 +1,7 @@
 "use strict";
 const debug = require("debug")("auth0-link-accounts-sample");
 const rp = require("request-promise-native");
+const axios = require('axios');
 
 class Auth0Client {
   constructor() {
@@ -36,11 +37,53 @@ class Auth0Client {
     const opts = { ...options, headers };
     const body = await rp(opts);
     try {
+      console.log("body=", JSON.parse(body));
       return JSON.parse(body);
     } catch (err) {
       debug("body parsing failed, returning unparsed body %o", body);
       return body;
     }
+  }
+
+  async getGraphQLUsers({sub,email}) {
+    debug("searching maching users with email *%s* ... via the graphql endpoint", email);
+    const token = await this.getToken();
+    const body = {
+      query: `
+        query Query($usersQ: String) {
+          users(q: $usersQ) {
+            records {
+              email
+              name
+              picture
+              user_id
+              identities {
+                connection {
+                  enabled_clients {
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        usersQ: `email:${email}`
+      }
+    }
+    console.log(" body = " + JSON.stringify(body), token, process.env.ISSUER_BASE_URL);
+    const reslt = await axios.post(`${process.env.GRAPHQL_URL}`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        domain: `${process.env.BASE_DOMAIN}`
+      }
+    })
+    debug("query input parsed", JSON.stringify(reslt.data.data.users.records));
+    return reslt.data.data.users.records;
+   
+    
+  
   }
 
   async getUser(userId) {

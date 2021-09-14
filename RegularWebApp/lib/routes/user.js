@@ -15,14 +15,16 @@ router.get("/", async (req, res) => {
     const getUserProfile = auth0Client.getUser(sub);
     if (email_verified)
       // account linking is only offered verified email
-      getUsersWithSameVerifiedEmail = auth0Client.getUsersWithSameVerifiedEmail(
+      getUsersWithSameVerifiedEmail = await auth0Client.getGraphQLUsers(
         req.openid.user
       );
+      
 
     const [user, suggestedUsers] = await Promise.all([
       getUserProfile,
       getUsersWithSameVerifiedEmail,
     ]);
+    console.log("suggestedUsers=" , suggestedUsers, getUsersWithSameVerifiedEmail);
 
     const flashError = clear(req);
     res.render("user", {

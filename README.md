@@ -1,6 +1,19 @@
 # Auth0 Account Linking Sample
 
-Sample implementations of [Auth0 Account Linking](https://auth0.com/docs/link-accounts).
+Sample implementations of [Auth0 Account Linking](https://auth0.com/docs/link-accounts) adapted for graphql hack [https://github.com/auth0/upluslus-2021-api2-graphql]
+
+This is implemented only for Regular webapp
+
+Steps: 
+1) Get the graphql hack https://github.com/auth0/upluslus-2021-api2-graphql running with instructions from the repo
+2) copy sample.env to .env and update the values. Added couple of values for this hack
+
+BASE_DOMAIN=<API2_DOMAIN>
+GRAPHQL_URL=http://localhost:4000
+ 
+
+
+
 
 ## Key Features
 

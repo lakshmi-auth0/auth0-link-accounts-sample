@@ -2,6 +2,7 @@
 const debug = require("debug")("auth0-link-accounts-sample");
 const rp = require("request-promise-native");
 const axios = require('axios');
+const { result } = require("lodash");
 
 class Auth0Client {
   constructor() {
@@ -50,35 +51,54 @@ class Auth0Client {
     const token = await this.getToken();
     const body = {
       query: `
-        query Query($usersQ: String) {
-          users(q: $usersQ) {
-            records {
-              email
-              name
-              picture
-              user_id
-              identities {
-                connection {
-                  enabled_clients {
-                    name
+      query Query($usersQ: String) {
+        users(q: $usersQ) {
+          records {
+            email
+            name
+            picture
+            user_id
+            identities {
+              connection {
+                enabled_clients {
+                  name
+                }
+              }
+            }
+            roles {
+              records {
+                id
+                name
+                members {
+                  pagination {
+                    total
                   }
+                }
+              }
+            }
+            organizations {
+              records {
+                display_name
+                branding {
+                  logo_url
                 }
               }
             }
           }
         }
+      }
       `,
       variables: {
         usersQ: `email:${email}`
       }
     }
-    console.log(" body = " + JSON.stringify(body), token, process.env.ISSUER_BASE_URL);
     const reslt = await axios.post(`${process.env.GRAPHQL_URL}`, body, {
       headers: {
         Authorization: `Bearer ${token}`,
         domain: `${process.env.BASE_DOMAIN}`
       }
     })
+    console.log(reslt.data)
     debug("query input parsed", JSON.stringify(reslt.data.data.users.records));
     return reslt.data.data.users.records;
    

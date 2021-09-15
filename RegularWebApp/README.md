@@ -1,3 +1,8 @@
+How to run it against vivaldi:
+
+Use  - `NODE_TLS_REJECT_UNAUTHORIZED=0 npm start` so self signed certificates won't complain.
+
+
 # Auth0 Node.js Regular Web App Account Linking Sample
 
 This Node.js Regular Web App serves as an example of the [Suggested Account Linking Scenario](https://auth0.com/docs/link-accounts/suggested-linking), where the App searches for other accounts with same verified email address after user logs in, and suggests him to link the accounts if any match is found.
